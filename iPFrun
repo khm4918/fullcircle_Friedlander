@@ -1,0 +1,39 @@
+# find and save important directories
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export IPFOAM_DIR="$HOME/OpenFOAM/initialProfileFoam/"
+
+# delete constant, system and 0 folders from iPF
+cd $IPFOAM_DIR
+rm -r constant system 0
+cp -r base_fields_sqmesh 0
+
+# remove old createFields file and replace with case template
+rm createFields.H
+cp History/Experimental/cyl_cav_rmi/main/arrayD_nocav_nopert.H createFields.H
+
+# run blockMesh in case file and copy constant and system folders
+cd $SCRIPT_DIR
+blockMesh 
+cp -r constant $IPFOAM_DIR/constant
+cp -r system $IPFOAM_DIR/system
+
+# open iPF and generate fields
+cd $IPFOAM_DIR
+wclean
+wmake
+initialProfileFoam
+
+# copy iPF output to case directory
+rm -r $SCRIPT_DIR/0
+cp -r 0 $SCRIPT_DIR/0
+
+# change naming convention to case file
+cd $SCRIPT_DIR/0
+mv alpha1 alpha.fluid
+mv rho1 rho.fluid
+mv rho2 rho.gas
+
+#open 0 files and change object notation
+sed -i 's/\(object[[:space:]]*\).*;/\1alpha.fluid;/' alpha.fluid
+sed -i 's/\(object[[:space:]]*\).*;/\1rho.fluid;/' rho.fluid
+sed -i 's/\(object[[:space:]]*\).*;/\1rho.gas;/' rho.gas

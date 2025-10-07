@@ -1,0 +1,90 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  | =========                 |                                                 |
+  | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+  |  \\    /   O peration     | Version:  2.3.0                                 |
+  |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+  |    \\/     M anipulation  |                                                 |
+  \*---------------------------------------------------------------------------*/
+FoamFile
+{
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  location    "system";
+  object      setFieldsDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+//- Unshocked water
+p1      1.0e5;
+rho1    1000.0;
+
+//- Gas
+p2      1.0e5;
+rho2    1.293;
+
+//- Shocked water
+p3	20.0e9;
+rho3	1000.0;
+
+defaultFieldValues
+(
+    volVectorFieldValue U              (0 0 0)
+    volScalarFieldValue p              $p1
+    volScalarFieldValue alpha.fluid    1
+    volScalarFieldValue rho.fluid      $rho1
+    volScalarFieldValue rho.gas        $rho2
+);
+
+regions
+(
+//- Gas region
+    cylinderToCell
+    {
+	level 2;
+	refineInternal no;
+
+        p1 (6e-3 6e-3 0);
+	p2 (6e-3 6e-3 1);
+	radius 2.5e-3;
+
+        fieldValues
+        (
+            volScalarFieldValue p           $p2
+            volScalarFieldValue alpha.fluid 0.0
+        );
+    }
+
+//- Shock region
+	cylinderAnnulusToCell
+	{
+		level 2;
+		refineInternal yes;
+
+		p1 (6e-3 6e-3 0);
+		p2 (6e-3 6e-3 1);
+		outerRadius 5.1e-3;
+		innerRadius 4.9e-3;
+
+		fieldValues
+		(
+			volScalarFieldValue p	    	$p3
+			volScalarFieldValue rho.fluid   $rho3
+		);
+	}
+
+//- Perturbed water region
+//	boxToCell
+//	{
+//		box (5e-3 0.25e-3 0) (5.5e-3 0.75e-3 1);
+//
+//		fieldValues
+//		(
+//			volScalarFieldValue rho.fluid	$rho1
+//			volScalarFieldValue p		$p1
+//			volScalarFieldValue alpha.fluid	1
+//		);
+//	}
+);
+
+// ************************************************************************* //

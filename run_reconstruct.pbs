@@ -1,0 +1,42 @@
+#!/bin/sh
+#PBS -l walltime=7:59:00
+#PBS -l select=1:ncpus=1:mpiprocs=1:mem=10gb
+#PBS -j oe
+
+# Change to the directory the job was submitted from
+cd $PBS_O_WORKDIR
+
+# Load required modules
+module purge
+module load mpi/intel-2018     # Keep your specified MPI module
+module load openfoam/9.0       # Make sure this loads the correct OpenFOAM version (e.g., v2206)
+
+# Source OpenFOAM environment
+source $FOAM_ETC/bashrc
+
+# Source blastFoam environment
+source $HOME/OpenFOAM/blastfoam/etc/bashrc
+
+# Ensure INTELMPI is used rather than a dummy
+export WM_MPLB=INTELMPI
+
+# Sanity check
+which blastFoam
+echo $WM_MPLIB
+
+# Add BlastFOAM binaries to path
+#export PATH=$HOME/OpenFOAM/blastfoam/applications/bin:$PATH
+
+# (Optional) Set environment variable for OpenMPI if needed
+# export I_MPI_PMI_LIBRARY=/lib64/libpmi.so
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+paraFoam -builtin -touch
+
+# Reconstruct case
+reconstructPar
+
+# Delete all processor files
+rm -r processor*
