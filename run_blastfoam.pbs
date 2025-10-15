@@ -12,6 +12,9 @@ module load tools/prod     		# Load required tools for other packages
 module load Python			# For generation of blockMeshDict
 module load OpenFOAM/9-foss-2023a       # FOSS toolchain
 
+# Run python script to generate blockMeshDict
+python blockMeshDict_gen.py
+
 # Source OpenFOAM environment
 source $FOAM_BASH
 
@@ -38,9 +41,6 @@ mpirun --version | head -n 1
 
 # Create .foam dummy file
 paraFoam -builtin -touch
-
-# Run python script to generate blockMeshDict
-python blockMeshDict_Gen.py
 
 # Create mesh and set fields
 ./iPFrun
