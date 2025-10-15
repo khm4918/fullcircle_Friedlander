@@ -1,0 +1,44 @@
+#!/bin/sh
+#PBS -l walltime=1:00:00
+#PBS -l select=1:ncpus=8:mpiprocs=8:mem=32gb
+#PBS -j oe
+
+# Move to the directory from which the job was submitted
+cd $PBS_O_WORKDIR
+
+# Clean module environment
+module purge
+
+# Load required modules — adjust versions to what’s available on Phase 2
+module load Python
+module load impi/2021.15.0-intel-compilers-2025.1.1
+module load OpenFOAM/9-foss-2023a
+
+# Source OpenFOAM environment
+source $FOAM_ETC/bashrc
+
+# Source blastFoam environment
+source $HOME/OpenFOAM/blastfoam/etc/bashrc
+
+# Force use of Intel MPI in OpenFOAM
+export WM_MPLIB=INTELMPI
+
+# Sanity checks
+echo "Which blastFoam: $(which blastFoam)"
+echo "MPI library: $WM_MPLIB"
+
+# (Optional) If you need to set PMI library
+# export I_MPI_PMI_LIBRARY=/lib64/libpmi.so
+
+# Include OpenFOAM run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+# Prepare mesh / patches / decomposition
+paraFoam -builtin -touch
+runApplication blockMesh
+runApplication addEmptyPatch internalPatch internal -overwrite
+runApplication decomposePar
+
+# Run solver in parallel
+mpirun -np $PBS_NP blastFoam -parallel > log.blastFoam 2>&1
+
