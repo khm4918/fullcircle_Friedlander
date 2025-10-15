@@ -8,8 +8,8 @@ cd $PBS_O_WORKDIR
 
 # Load required modules
 module purge				# Clean modules
-module load Python			# For generation of blockMeshDic
-module load tools/prod     		# Load required tools to load OpenFOAM
+module load tools/prod     		# Load required tools for other packages
+module load Python			# For generation of blockMeshDict
 module load OpenFOAM/9-foss-2023a       # FOSS toolchain
 
 # Source OpenFOAM environment
