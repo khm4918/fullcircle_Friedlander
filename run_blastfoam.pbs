@@ -8,6 +8,7 @@ cd $PBS_O_WORKDIR
 
 # Load required modules
 module purge				# Clean modules
+module load Python			# For generation of blockMeshDic
 module load tools/prod     		# Load required tools to load OpenFOAM
 module load OpenFOAM/9-foss-2023a       # FOSS toolchain
 
@@ -35,10 +36,17 @@ mpirun --version | head -n 1
 # Source tutorial run functions
 . $WM_PROJECT_DIR/bin/tools/RunFunctions
 
+# Create .foam dummy file
 paraFoam -builtin -touch
 
+# Run python script to generate blockMeshDict
+python blockMeshDict_Gen.py
+
+# Create mesh and set fields
+./iPFrun
+
 # Create mesh
-runApplication blockMesh
+#runApplication blockMesh
 
 # -- Add internal patch
 runApplication addEmptyPatch internalPatch internal -overwrite
