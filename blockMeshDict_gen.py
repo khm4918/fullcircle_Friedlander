@@ -13,7 +13,7 @@ params = {
 plt.rcParams.update(params)
 
 #Plot figure of vertices
-showfig = True
+showfig = False
 
 # Parameters
 r0 = 0.5        # starting radius (mm)

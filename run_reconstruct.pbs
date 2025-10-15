@@ -7,18 +7,15 @@
 cd $PBS_O_WORKDIR
 
 # Load required modules
-module purge
-module load mpi/intel-2018     # Keep your specified MPI module
-module load openfoam/9.0       # Make sure this loads the correct OpenFOAM version (e.g., v2206)
+module purge                                            # Clean modules
+module load tools/prod                                  # Load required tools for other packages
+module load OpenFOAM/9-foss-2023a                       # FOSS toolchain
 
 # Source OpenFOAM environment
-source $FOAM_ETC/bashrc
+source $FOAM_BASH
 
 # Source blastFoam environment
 source $HOME/OpenFOAM/blastfoam/etc/bashrc
-
-# Ensure INTELMPI is used rather than a dummy
-export WM_MPLB=INTELMPI
 
 # Sanity check
 which blastFoam

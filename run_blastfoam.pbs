@@ -7,10 +7,15 @@
 cd $PBS_O_WORKDIR
 
 # Load required modules
-module purge				# Clean modules
-module load tools/prod     		# Load required tools for other packages
-module load Python			# For generation of blockMeshDict
-module load OpenFOAM/9-foss-2023a       # FOSS toolchain
+module purge						# Clean modules
+module load tools/prod     				# Load required tools for other packages
+module load Python/3.11.3-GCCcore-12.3.0		# For generation of blockMeshDict
+module load OpenFOAM/9-foss-2023a       		# FOSS toolchain
+
+# Ensure your user python packages are visible
+export PYTHONUSERBASE=$HOME/.local
+export PYTHONPATH=$HOME/.local/lib/python3.11/site-packages:$PYTHONPATH
+export PATH=$HOME/.local/bin:$PATH
 
 # Run python script to generate blockMeshDict
 python blockMeshDict_gen.py
