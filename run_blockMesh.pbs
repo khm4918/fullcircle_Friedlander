@@ -1,6 +1,6 @@
 #!/bin/sh
 #PBS -l walltime=23:59:00
-#PBS -l select=4:ncpus=64:mpiprocs=64:mem=256gb
+#PBS -l select=1:ncpus=1:mpiprocs=1:mem=64gb
 #PBS -j oe
 
 # Change to the directory the job was submitted from
@@ -9,16 +9,16 @@ cd $PBS_O_WORKDIR
 # Load required modules
 module purge						# Clean modules
 module load tools/prod     				# Load required tools for other packages
-#module load Python/3.11.3-GCCcore-12.3.0		# For generation of blockMeshDict
+module load Python/3.11.3-GCCcore-12.3.0		# For generation of blockMeshDict
 module load OpenFOAM/9-foss-2023a       		# FOSS toolchain
 
 # Ensure your user python packages are visible
-#export PYTHONUSERBASE=$HOME/.local
-#export PYTHONPATH=$HOME/.local/lib/python3.11/site-packages:$PYTHONPATH
-#export PATH=$HOME/.local/bin:$PATH
+export PYTHONUSERBASE=$HOME/.local
+export PYTHONPATH=$HOME/.local/lib/python3.11/site-packages:$PYTHONPATH
+export PATH=$HOME/.local/bin:$PATH
 
 # Run python script to generate blockMeshDict
-#python blockMeshDict_gen360.py
+python blockMeshDict_gen360.py
 
 # Source OpenFOAM environment
 source $FOAM_BASH
@@ -44,20 +44,5 @@ mpirun --version | head -n 1
 # Source tutorial run functions
 . $WM_PROJECT_DIR/bin/tools/RunFunctions
 
-# Create .foam dummy file
-paraFoam -builtin -touch
-
-# Create mesh and set fields
-./iPFrun
-
 # Create mesh
-#runApplication blockMesh
-
-# -- Add internal patch
-runApplication addEmptyPatch internalPatch internal -overwrite
-
-# -- Decompose the case
-runApplication decomposePar
-
-# -- run the calc
-runParallel $(getApplication)
+runApplication blockMesh

@@ -3,13 +3,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export IPFOAM_DIR="$HOME/OpenFOAM/initialProfileFoam/"
 
 #run blockMesh in case file
-cd $SCRIPT_DIR
-blockMesh
+#cd $SCRIPT_DIR
+#blockMesh
 
 # delete constant, system and 0 folders from iPF
 cd $IPFOAM_DIR
 rm -r constant system 0
-cp -r base_fields_sqmesh 0
+cp -r base_fields_sqmesh360 0
 
 # copy constant and system folders to iPF
 cd $SCRIPT_DIR
@@ -19,7 +19,7 @@ cp -r system $IPFOAM_DIR/system
 # remove old createFields file and replace with case template
 cd $IPFOAM_DIR
 rm createFields.H
-cp History/Experimental/cyl_cav_rmi/main/arrayD_nocav_nopert.H createFields.H
+cp History/Validation/cyl_rmi/lambda_study/aug2025_n12_shot12_friedlanderGPT.H createFields.H
 
 # open iPF and generate fields
 cd $IPFOAM_DIR
