@@ -27,7 +27,7 @@ endTime         2.0e-5;
 
 writeControl    adjustableRunTime;
 
-writeInterval   5e-7;
+writeInterval   2.5e-7;
 
 writeFormat     binary;
 
